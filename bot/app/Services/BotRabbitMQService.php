@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use Exception;
 use PhpAmqpLib\Channel\AbstractChannel;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -10,11 +9,9 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 class BotRabbitMQService
 {
     private AMQPStreamConnection $connection;
+
     private AbstractChannel|AMQPChannel $channel;
 
-    /**
-     * @throws Exception
-     */
     public function __construct()
     {
         $this->connection = new AMQPStreamConnection(
@@ -27,8 +24,26 @@ class BotRabbitMQService
         $this->channel = $this->connection->channel();
     }
 
+    public function consume(callable $callback): void
+    {
+        $this->channel->queue_declare('telegram', true, true, false, false);
+
+        $this->channel->basic_qos(null, 1, null);
+        $this->channel->basic_consume('telegram', '', false, false, false, false, $callback);
+
+        while ($this->channel->is_consuming()) {
+            $this->channel->wait();
+        }
+    }
+
     public function getChannel(): AMQPChannel
     {
         return $this->channel;
+    }
+
+    public function close(): void
+    {
+        $this->channel->close();
+        $this->connection->close();
     }
 }

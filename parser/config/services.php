@@ -35,10 +35,6 @@ return [
         ],
     ],
 
-    'news' => [
-        'rss_url' => env('NEWS_RSS_URL', 'https://news.google.com/news/rss'),
-    ],
-
     'rabbitmq' => [
         'host' => env('RABBITMQ_HOST', 'localhost'),
         'port' => env('RABBITMQ_PORT', 5672),

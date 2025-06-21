@@ -24,6 +24,7 @@ class InitRabbitCommand extends Command
 
     /**
      * Execute the console command.
+     *
      * @throws \Exception
      */
     public function handle(): void
@@ -36,9 +37,16 @@ class InitRabbitCommand extends Command
         );
         $channel = $connection->channel();
 
-        $channel->exchange_declare('telegram', 'fanout', false, true, false);
-        $channel->queue_declare('telegram', false, true, false);
-        $channel->queue_bind('telegram', 'telegram');
+        // Создаём durable exchange и queue для долговременного хранения
+        $channel->exchange_declare('telegram', 'direct', false, true, false);
+        $channel->queue_declare('telegram', false, true, false, false, false, [
+            'x-message-ttl' => ['I', 3600000], // TTL 1 час
+            'x-max-length' => ['I', 10000],     // Максимум 10k сообщений
+        ]);
+        $channel->queue_bind('telegram', 'telegram', 'news');
+
+        $channel->close();
+        $connection->close();
 
         $this->info('RabbitMQ exchange and queue initialized successfully.');
     }
