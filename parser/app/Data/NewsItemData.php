@@ -14,8 +14,7 @@ class NewsItemData extends Data
         public string  $category,
         public  $img = null,
         public Carbon  $pubDate,
-    )
-    {
+    ) {
     }
 
     public static function fromFeedItem($item, $rss): self

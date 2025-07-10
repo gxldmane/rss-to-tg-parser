@@ -120,7 +120,6 @@ class NewsMonitorCommand extends Command
                         usleep(100000); // 0.1 секунды
                     }
                 }
-
             } catch (Exception $e) {
                 $this->error('Error checking feed: '.$e->getMessage());
             }

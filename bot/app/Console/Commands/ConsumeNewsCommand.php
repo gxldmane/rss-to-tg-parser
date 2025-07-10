@@ -16,7 +16,8 @@ class ConsumeNewsCommand extends Command
 
     public function __construct(
         private readonly BotRabbitMQService $rabbitMQService,
-    ) {
+    )
+    {
         parent::__construct();
     }
 
@@ -37,15 +38,14 @@ class ConsumeNewsCommand extends Command
 
                 SendItemToTelegramAction::run($newsItem);
 
-                $this->info('Processed: '.$newsItem->title);
+                $this->info('Processed: ' . $newsItem->title);
                 $this->info("Waiting {$delay} seconds before next message...");
 
                 $msg->ack();
 
                 sleep($delay);
-
             } catch (Exception $e) {
-                $this->error('Error processing message: '.$e->getMessage());
+                $this->error('Error processing message: ' . $e->getMessage());
                 $msg->nack();
             }
         };

@@ -14,7 +14,6 @@ class NewsData extends Data
         public string  $category,
         public $img = null,
         public Carbon  $pubDate,
-    )
-    {
+    ) {
     }
 }
